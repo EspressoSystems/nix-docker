@@ -1,15 +1,12 @@
-FROM alpine:3
-
-# Enable HTTPS support in wget and set nsswitch.conf to make resolution work within containers
-RUN apk add --no-cache --update openssl git \
-  && echo hosts: files dns > /etc/nsswitch.conf
+FROM buildpack-deps:jammy
 
 # Download Nix and install it into the system.
 ARG NIX_VERSION=2.8.1
 RUN wget https://nixos.org/releases/nix/nix-${NIX_VERSION}/nix-${NIX_VERSION}-$(uname -m)-linux.tar.xz \
   && tar xf nix-${NIX_VERSION}-$(uname -m)-linux.tar.xz \
-  && addgroup -g 30000 -S nixbld \
-  && for i in $(seq 1 30); do adduser -S -D -h /var/empty -g "Nix build user $i" -u $((30000 + i)) -G nixbld nixbld$i ; done \
+  && addgroup --system --gid 30000 nixbld \
+  && for i in $(seq 1 30); do adduser --system --disabled-password --home /var/empty --gecos "Nix build user $i" --uid $((30100 + i)) --ingroup nixbld nixbld$i ; done \
+  && for i in $(seq 1 30); do usermod -aG nixbld nixbld$i ; done \
   && mkdir -m 0755 /etc/nix \
   && echo 'sandbox = false' > /etc/nix/nix.conf \
   && echo 'filter-syscalls = false' >> /etc/nix/nix.conf \
