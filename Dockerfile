@@ -1,7 +1,7 @@
 FROM buildpack-deps:jammy
 
 # Download Nix and install it into the system.
-ARG NIX_VERSION=2.24.5
+ARG NIX_VERSION=2.24.7
 RUN wget https://nixos.org/releases/nix/nix-${NIX_VERSION}/nix-${NIX_VERSION}-$(uname -m)-linux.tar.xz \
   && tar xf nix-${NIX_VERSION}-$(uname -m)-linux.tar.xz \
   && addgroup --system --gid 30000 nixbld \
