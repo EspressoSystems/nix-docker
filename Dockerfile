@@ -1,4 +1,4 @@
-FROM buildpack-deps:jammy
+FROM buildpack-deps:26.04
 
 # Download Nix and install it into the system.
 ARG NIX_VERSION=2.34.0
